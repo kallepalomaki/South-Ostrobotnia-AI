@@ -3,7 +3,7 @@ import tiktoken # for token counting
 import numpy as np
 from collections import defaultdict
 
-data_path = "../data/train_set.json"
+data_path = "../data/train_set2.json"
 
 # Load the dataset
 with open(data_path, 'r', encoding='utf-8') as f:

@@ -1,6 +1,7 @@
 venv/
 *~
 *.txt
+*.json
 !requirements.txt
 .idea/
 .DS_Store

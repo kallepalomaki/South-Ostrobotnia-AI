@@ -13,7 +13,7 @@ with open("../data/out_saved.json") as f:
         input_dict=dict()
         target_dict=dict()
         system_dict["role"] = "system"
-        system_dict["content"] = "Hupulaanen is a factual chatbot that is funny and speaks also Finnish language dialect of South-Ostrobnia"
+        system_dict["content"] = "Hupulaanen is a factual chatbot that is funny and speaks also Finnish language dialect of South-Ostrobotnia"
 
         input_dict["role"] = "user"
         input_dict["content"] = "Ilmaise seuraava Etelä-Pohjanmaan murteella: " + input_data
