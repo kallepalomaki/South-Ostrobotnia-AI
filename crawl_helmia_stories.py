@@ -17,8 +17,9 @@ def add_space_after_dot_comma(text):
 
 
 data_list=[]
-
-with open("../data/helmia_stories.json", "w") as f:
+cnt_title=0
+titles=[]
+with open("../data/helmia_stories.json", "w", encoding="utf-8") as f:
     for link in links:
         print(link)
         page_data=link.get("href")
@@ -29,24 +30,25 @@ with open("../data/helmia_stories.json", "w") as f:
                 print(link.get("href"))
                 page2 = requests.get(link.get("href"))
                 soup2 = BeautifulSoup(page2.content, 'html.parser')
-                title = soup2.find_all("h1", {"class": "entry-title"})
-                if title[0].a:
-                    title_text=title[0].a.text
-                else:
-                    title_text="No title"
-                data_dict["title"]=title_text
-                data=soup2.find_all("div", {"class":"entry-content"})
-                data1=data[0].find_all("p")
-                text=""
-                for item in data1:
-                    #print(item.text)
-                    line_splitted=item.text.split(". ")
-                    for line in line_splitted:
-                        line_text=line + ". "
-                        line_text=add_space_after_dot_comma(line_text.replace("..","."))
-                        if len(line_text) > 3:
-                            #f.write(line_text + "\n")
-                            text+=line_text
-                data_dict["content"]=text
-                json.dump(data_dict,f)
-                f.write("\n")
+                data = soup2.find_all(["h1","div"], {"class": ["entry-title","entry-content"]})
+                for item in data:
+                    if item.name == "h1" and "entry-title" in item.get("class", []):
+                        # Start a new entry when a title is found
+                        current_title = item.get_text().replace("\xa0", " ").replace("\n", " ")
+                        cnt_title+=1
+                        #entries.append({"title": current_title, "content": []})
+                    elif item.name == "div" and "entry-content" in item.get("class", []):
+                        # If content is found, associate it with the last title (if any)
+                        content_text = item.get_text().replace("\xa0", " ").replace("\n", " ")
+                        content_text = re.sub(r"\.(\w)", r". \1", content_text)
+                        if cnt_title==0:
+                            current_title="No title"
+                        if not(current_title in titles):
+                            print(current_title)
+                            data_dict["title"]=current_title
+                            data_dict["content"]=content_text
+                            json.dump(data_dict,f,ensure_ascii=False)
+                            f.write("\n")
+                            titles.append(current_title)
+
+                        cnt_title=0

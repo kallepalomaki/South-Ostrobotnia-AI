@@ -99,31 +99,28 @@ input_file = 'stories.txt'  # Replace with your file path
 output_file = 'fine_tuning_data.jsonl'
 
 # List of alternative instructions in Finnish
+
 instructions_finnish = [
-    "Kirjoita seuraava tarina Etelä-Pohjanmaan murteella:",
-    "Kertoa seuraava tarina Etelä-Pohjanmaan aksentilla:",
-    "Puhuttele tarina Etelä-Pohjanmaan alueen kieliopilla:",
-    "Kirjoita seuraava teksti Etelä-Pohjanmaan murteella:",
-    "Kuvittele, että kerrot tämän tarinan Etelä-Pohjanmaan murteella:",
-    "Ilmaise tämä tarina Etelä-Pohjanmaan murteella:",
-    "Kirjoita tämä tarina Etelä-Pohjanmaan alueen aksentilla:",
-    "Laadi tämä tarina Etelä-Pohjanmaan murteella:",
-    "Muokkaa seuraava tarina Etelä-Pohjanmaan kielioppiin:",
-    "Käännä tämä tarina Etelä-Pohjanmaan murteelle:"
+    "Kirjoita tarina Etelä-Pohjanmaan murteella, joka perustuu seuraavaan otsikkoon:",
+    "Laadi tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
+    "Keksi tarina Etelä-Pohjanmaan murteella, joka alkaa tästä otsikosta:",
+    "Kertoa tarina Etelä-Pohjanmaan murteella, jonka otsikko on tämä:",
+    "Aloita tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
+    "Kirjoita tarina Etelä-Pohjanmaan murteella, joka syntyy seuraavasta otsikosta:",
+    "Muokkaa seuraava tarina tämän otsikon mukaan:",
+    "Kuvittele tarina Etelä-Pohjanmaan murteella, joka alkaa tällä otsikolla:",
 ]
 
-# List of alternative instructions in English
+# List of alternative instructions for generating stories in English
 instructions_english = [
-    "Write the following story in the South Ostrobothnian accent of Finnish:",
-    "Tell the following story using the South Ostrobothnian accent:",
-    "Speak the story in the dialect of South Ostrobothnia:",
-    "Write this text in the South Ostrobothnian accent:",
-    "Imagine you are telling the story in the South Ostrobothnian accent:",
-    "Express this story in the South Ostrobothnian dialect:",
-    "Write this story in the South Ostrobothnian regional accent:",
-    "Create this story in the South Ostrobothnian dialect:",
-    "Adapt the following story to the South Ostrobothnian accent:",
-    "Translate this story to the South Ostrobothnian dialect:"
+    "Write a story in the South Ostrobothnian based on the following title:",
+    "Create a story in the South Ostrobothnian from this title:",
+    "Generate a story in the South Ostrobothnian starting from this title:",
+    "Tell a story in the South Ostrobothnian with this title:",
+    "Generate a narrative in the South Ostrobothnian based on this title:",
+    "Write a story in the South Ostrobothnian using the following title:",
+    "Imagine a story in the South Ostrobothnian that begins with this title:",
+    "Express a story in the South Ostrobothnian that evolves from this title:"
 ]
 
 # Function to prepare data for fine-tuning
@@ -134,27 +131,27 @@ def finetuning_stories(input_file_name):
             story = json.loads(line)["content"].strip()  # Clean the story
             title = json.loads(line)["title"].strip()  # Clean the story
 
-            for _ in range(10):  # Generate 10 variations
-                # Randomly select an instruction for Finnish and English
-                prompt_finnish = f"{random.choice(instructions_finnish)}\n{story}"
-                prompt_english = f"{random.choice(instructions_english)}\n{story}"
+            #for _ in range(8):  # Generate 10 variations
+            # Randomly select an instruction for Finnish and English
+            prompt_finnish = f"{random.choice(instructions_finnish)}\n{title}"
+            prompt_english = f"{random.choice(instructions_english)}\n{title}"
 
-                # Create the training examples for both Finnish and English
+            # Create the training examples for both Finnish and English
 
-                dataset.append({
-                    "messages": [
-                        {"role": "system", "content": "Write the story."},
-                        {"role": "user", "content": prompt_finnish},
-                        {"role": "assistant", "content": story}
-                    ]
-                })
-                dataset.append({
-                    "messages": [
-                        {"role": "system", "content": "Write the story."},
-                        {"role": "user", "content": prompt_english},
-                        {"role": "assistant", "content": story}
-                    ]
-                })
+            dataset.append({
+                "messages": [
+                    {"role": "system", "content": "Write the story."},
+                    {"role": "user", "content": prompt_finnish},
+                    {"role": "assistant", "content": story}
+                ]
+            })
+            dataset.append({
+                "messages": [
+                    {"role": "system", "content": "Write the story."},
+                    {"role": "user", "content": prompt_english},
+                    {"role": "assistant", "content": story}
+                ]
+            })
                 # Write both examples to the output file
     return dataset
 
@@ -172,9 +169,10 @@ if False:
     test_set.extend(test_set_tmp)
     train_set.extend(train_set_tmp)
 
-train_set.extend(finetuning_stories(input_file_name='../data/pohopekka_stories.json'))
-train_set.extend(finetuning_stories(input_file_name='../data/helmia_stories.json'))
+train_set.extend(finetuning_stories(input_file_name='../data/pohopekka_stories_general_language_title.json'))
+train_set.extend(finetuning_stories(input_file_name='../data/helmia_stories_general_language_title.json'))
 
+print("kekkonen")
 if False:
     with open("../data/train_set2.json","w") as f:
         for message in train_set:
@@ -217,29 +215,3 @@ instructions_english = [
 ]
 
 # List of alternative instructions for generating stories in Finnish
-instructions_finnish = [
-    "Kirjoita tarina, joka perustuu seuraavaan otsikkoon:",
-    "Laadi tarina seuraavasta otsikosta:",
-    "Keksi tarina, joka alkaa tästä otsikosta:",
-    "Kertoa tarina, jonka otsikko on tämä:",
-    "Aloita tarina seuraavasta otsikosta:",
-    "Puhuttele tarina, jonka lähtökohtana on tämä otsikko:",
-    "Kirjoita tarina, joka syntyy seuraavasta otsikosta:",
-    "Muokkaa seuraava tarina tämän otsikon mukaan:",
-    "Kuvittele tarina, joka alkaa tällä otsikolla:",
-    "Ilmaise seuraava tarina tämän otsikon ympärille:"
-]
-
-# List of alternative instructions for generating stories in English
-instructions_english = [
-    "Write a story based on the following title:",
-    "Create a story from this title:",
-    "Generate a story starting from this title:",
-    "Tell a story with this title:",
-    "Start a story with the following title:",
-    "Generate a narrative based on this title:",
-    "Write a story using the following title:",
-    "Create a narrative from the following title:",
-    "Imagine a story that begins with this title:",
-    "Express a story that evolves from this title:"
-]

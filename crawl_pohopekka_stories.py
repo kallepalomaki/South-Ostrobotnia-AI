@@ -15,8 +15,8 @@ for element in soup.find_all(["h2", "div"]):
         if latest_h2:
             if "porsta" in latest_h2:
                 print("here")
-            content=element.text.split("# posted")[0].strip().replace('\r','').replace('PEKAN SIVUPERSOONA','').\
-                replace('Pekan Sivupersoona','')
+            content=element.text.split("# posted")[0].strip().replace('\r',' ').replace('PEKAN SIVUPERSOONA','').\
+                replace('Pekan Sivupersoona','').replace("\n"," ")
             if "--" in content:
                 print(content)
 
@@ -26,14 +26,14 @@ for element in soup.find_all(["h2", "div"]):
                 structured_data.append({"title": latest_h2, "content": content})
             latest_h2 = None
 
-with open("../data/pohopekka_stories.json", "w") as f:
+with open("../data/pohopekka_stories.json", "w", encoding="utf-8") as f:
     for item in structured_data:
         #line_splitted=item_text.split("\n")
         #if "posted" in item["content"]:
 
         print(item["title"])
         print(item["content"])
-        json.dump(item,f)
+        json.dump(item, f, ensure_ascii=False)
         f.write("\n")
 
 
