@@ -19,8 +19,11 @@ def write_translated():
             input_dict=dict()
             target_dict=dict()
             system_dict["role"] = "system"
-            system_dict["content"] = "Hupulaanen is a factual chatbot that speaks also Finnish language dialect of South-Ostrobotnia"
-
+            #system_dict["content"] = "Hupulaanen is a factual chatbot that speaks also Finnish language dialect of South-Ostrobotnia"
+            #{"role": "system", "content":
+            #system_dict["content"]="You are a storyteller who writes in the South Ostrobothnian dialect."
+            #{"role": "system",
+            system_dict["content"]="You translate standard Finnish sentences into the South Ostrobothnian dialect."
             input_dict["role"] = "user"
             input_dict["content"] = "Ilmaise seuraava Etelä-Pohjanmaan murteella: " + input_data
 
@@ -73,7 +76,7 @@ def write_predict_next_words(input_filename): #(context_length=10, prediction_le
 
         dataset.append({
             "messages": [
-                {"role": "system", "content": "Predict the next words."},
+                {"role": "system", "content": "You predict the next word in the South Ostrobothnian dialect."},
                 {"role": "user", "content": prompt},
                 {"role": "assistant", "content": completion}
             ]
@@ -140,14 +143,14 @@ def finetuning_stories(input_file_name):
 
             dataset.append({
                 "messages": [
-                    {"role": "system", "content": "Write the story."},
+                    {"role": "You are a storyteller who writes in the South Ostrobothnian dialect."},
                     {"role": "user", "content": prompt_finnish},
                     {"role": "assistant", "content": story}
                 ]
             })
             dataset.append({
                 "messages": [
-                    {"role": "system", "content": "Write the story."},
+                    {"role": "You are a storyteller who writes in the South Ostrobothnian dialect."},
                     {"role": "user", "content": prompt_english},
                     {"role": "assistant", "content": story}
                 ]
@@ -160,17 +163,19 @@ def finetuning_stories(input_file_name):
 train_set=[]
 test_set=[]
 if False:
-    train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/pohopekka_stories.json')
-    train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/helmia_stories.json')
+    train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/pohopekka_stories_general_language_title.json')
+    train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/helmia_stories_general_language_title.json')
     train_set.extend(train_set_tmp)
     test_set.extend(test_set_tmp)
 
+if True:
     train_set_tmp, test_set_tmp=write_translated()
     test_set.extend(test_set_tmp)
     train_set.extend(train_set_tmp)
 
-train_set.extend(finetuning_stories(input_file_name='../data/pohopekka_stories_general_language_title.json'))
-train_set.extend(finetuning_stories(input_file_name='../data/helmia_stories_general_language_title.json'))
+if False:
+    train_set.extend(finetuning_stories(input_file_name='../data/pohopekka_stories_general_language_title.json'))
+    train_set.extend(finetuning_stories(input_file_name='../data/helmia_stories_general_language_title.json'))
 
 print("kekkonen")
 if False:
