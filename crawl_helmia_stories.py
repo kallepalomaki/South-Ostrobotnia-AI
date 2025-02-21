@@ -1,6 +1,6 @@
 import requests, re
 from bs4 import BeautifulSoup
-
+import json
 main_page_link="https://www.blogit.fi/helmiä-lakeudelta"
 
 page=requests.get(main_page_link)
@@ -15,17 +15,29 @@ def add_space_after_dot_comma(text):
 
     return text_with_spaces
 
-with open("helmia.txt", "w") as f:
+
+data_list=[]
+
+with open("../data/helmia_stories.json", "w") as f:
     for link in links:
         print(link)
         page_data=link.get("href")
         if page_data:
             if "helmia" in page_data:
+                data_dict = dict()
+
                 print(link.get("href"))
                 page2 = requests.get(link.get("href"))
                 soup2 = BeautifulSoup(page2.content, 'html.parser')
+                title = soup2.find_all("h1", {"class": "entry-title"})
+                if title[0].a:
+                    title_text=title[0].a.text
+                else:
+                    title_text="No title"
+                data_dict["title"]=title_text
                 data=soup2.find_all("div", {"class":"entry-content"})
                 data1=data[0].find_all("p")
+                text=""
                 for item in data1:
                     #print(item.text)
                     line_splitted=item.text.split(". ")
@@ -33,4 +45,8 @@ with open("helmia.txt", "w") as f:
                         line_text=line + ". "
                         line_text=add_space_after_dot_comma(line_text.replace("..","."))
                         if len(line_text) > 3:
-                            f.write(line_text + "\n")
+                            #f.write(line_text + "\n")
+                            text+=line_text
+                data_dict["content"]=text
+                json.dump(data_dict,f)
+                f.write("\n")

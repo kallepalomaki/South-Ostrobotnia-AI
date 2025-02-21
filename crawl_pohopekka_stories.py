@@ -15,7 +15,8 @@ for element in soup.find_all(["h2", "div"]):
         if latest_h2:
             if "porsta" in latest_h2:
                 print("here")
-            content=element.text.split("# posted")[0].strip().replace('\r','')
+            content=element.text.split("# posted")[0].strip().replace('\r','').replace('PEKAN SIVUPERSOONA','').\
+                replace('Pekan Sivupersoona','')
             if "--" in content:
                 print(content)
 
@@ -29,29 +30,11 @@ with open("../data/pohopekka_stories.json", "w") as f:
     for item in structured_data:
         #line_splitted=item_text.split("\n")
         #if "posted" in item["content"]:
-        if "porsta" in item["title"]:
-            print(item["title"])
-            print(item["content"])
 
         print(item["title"])
         print(item["content"])
         json.dump(item,f)
+        f.write("\n")
 
 
-if False:
-    for line in line_splitted:
-        line_splitted2=line.split(". ")
-        d=". "
-        s = [e + d for e in line.split(d) if e]
-        line_splitted2=s
-        for line2 in line_splitted2:
-            line_splitted3=line2.split("\r")
-            for line3 in line_splitted3:
-                line3=line3.strip()
-                if (line3 == "") or ("----" in line3):
-                    pass
-                else:
-                    if ("posted" not in line3) and (len(line3)>3):
-                        line3=line3.replace(" ."," ").replace("_","").replace("/"," ").replace("!.", "!")
-                        line3=re.sub(r'(?<=\S)\.(?=\w)', '. ', line3)
-                        f.write(line3 + "\n")
+
