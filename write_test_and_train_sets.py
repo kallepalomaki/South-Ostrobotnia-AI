@@ -55,8 +55,8 @@ def write_predict_next_words(input_filename): #(context_length=10, prediction_le
     :param context_length: Number of words used as input context.
     :param prediction_length: Number of words to predict as completion.
     """
-    max_context=15
-    max_prediction=10
+    max_context=10
+    max_prediction=1
 
     words=[]
     with open(input_filename) as f:
@@ -68,9 +68,9 @@ def write_predict_next_words(input_filename): #(context_length=10, prediction_le
 
     dataset = []
 
-    for i in range(len(words) - max_context - max_prediction):
+    for i in range(0, len(words) - max_context - max_prediction, 10):
         context_length = random.randint(3, max_context)
-        prediction_length = random.randint(2, max_prediction)
+        prediction_length = random.randint(1, max_prediction)
         prompt = ' '.join(words[i:i + context_length])
         completion = ' '.join(words[i + context_length:i + context_length + prediction_length])
 
@@ -92,7 +92,7 @@ def write_predict_next_words(input_filename): #(context_length=10, prediction_le
     # prepare_finetune_data("input.txt", "output.jsonl")
     random.shuffle(dataset)
     test_set=dataset[0:100]
-    train_set=dataset[101:]
+    train_set=dataset[101:200]
     return train_set, test_set
 
 
@@ -103,31 +103,32 @@ output_file = 'fine_tuning_data.jsonl'
 
 # List of alternative instructions in Finnish
 
-instructions_finnish = [
-    "Kirjoita tarina Etelä-Pohjanmaan murteella, joka perustuu seuraavaan otsikkoon:",
-    "Laadi tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
-    "Keksi tarina Etelä-Pohjanmaan murteella, joka alkaa tästä otsikosta:",
-    "Kertoa tarina Etelä-Pohjanmaan murteella, jonka otsikko on tämä:",
-    "Aloita tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
-    "Kirjoita tarina Etelä-Pohjanmaan murteella, joka syntyy seuraavasta otsikosta:",
-    "Muokkaa seuraava tarina tämän otsikon mukaan:",
-    "Kuvittele tarina Etelä-Pohjanmaan murteella, joka alkaa tällä otsikolla:",
-]
 
-# List of alternative instructions for generating stories in English
-instructions_english = [
-    "Write a story in the South Ostrobothnian based on the following title:",
-    "Create a story in the South Ostrobothnian from this title:",
-    "Generate a story in the South Ostrobothnian starting from this title:",
-    "Tell a story in the South Ostrobothnian with this title:",
-    "Generate a narrative in the South Ostrobothnian based on this title:",
-    "Write a story in the South Ostrobothnian using the following title:",
-    "Imagine a story in the South Ostrobothnian that begins with this title:",
-    "Express a story in the South Ostrobothnian that evolves from this title:"
-]
 
 # Function to prepare data for fine-tuning
 def finetuning_stories(input_file_name):
+    instructions_finnish = [
+        "Kirjoita tarina Etelä-Pohjanmaan murteella, joka perustuu seuraavaan otsikkoon:",
+        "Laadi tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
+        "Keksi tarina Etelä-Pohjanmaan murteella, joka alkaa tästä otsikosta:",
+        "Kertoa tarina Etelä-Pohjanmaan murteella, jonka otsikko on tämä:",
+        "Aloita tarina Etelä-Pohjanmaan murteella seuraavasta otsikosta:",
+        "Kirjoita tarina Etelä-Pohjanmaan murteella, joka syntyy seuraavasta otsikosta:",
+        "Muokkaa seuraava tarina tämän otsikon mukaan:",
+        "Kuvittele tarina Etelä-Pohjanmaan murteella, joka alkaa tällä otsikolla:",
+    ]
+
+    # List of alternative instructions for generating stories in English
+    instructions_english = [
+        "Write a story in the South Ostrobothnian based on the following title:",
+        "Create a story in the South Ostrobothnian from this title:",
+        "Generate a story in the South Ostrobothnian starting from this title:",
+        "Tell a story in the South Ostrobothnian with this title:",
+        "Generate a narrative in the South Ostrobothnian based on this title:",
+        "Write a story in the South Ostrobothnian using the following title:",
+        "Imagine a story in the South Ostrobothnian that begins with this title:",
+        "Express a story in the South Ostrobothnian that evolves from this title:"
+    ]
     dataset=[]
     with open(input_file_name, 'r') as file:
         for line in file:
@@ -143,26 +144,26 @@ def finetuning_stories(input_file_name):
 
             dataset.append({
                 "messages": [
-                    {"role": "You are a storyteller who writes in the South Ostrobothnian dialect."},
+                    {"role": "system", "content": "You are a storyteller who writes in the South Ostrobothnian dialect."},
                     {"role": "user", "content": prompt_finnish},
                     {"role": "assistant", "content": story}
                 ]
             })
             dataset.append({
                 "messages": [
-                    {"role": "You are a storyteller who writes in the South Ostrobothnian dialect."},
+                    {"role": "system", "content": "You are a storyteller who writes in the South Ostrobothnian dialect."},
                     {"role": "user", "content": prompt_english},
                     {"role": "assistant", "content": story}
                 ]
             })
                 # Write both examples to the output file
-    return dataset
+    return dataset[0:2]
 
 
 
 train_set=[]
 test_set=[]
-if False:
+if True:
     train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/pohopekka_stories_general_language_title.json')
     train_set_tmp,test_set_tmp=write_predict_next_words(input_filename='../data/helmia_stories_general_language_title.json')
     train_set.extend(train_set_tmp)
@@ -173,20 +174,20 @@ if True:
     test_set.extend(test_set_tmp)
     train_set.extend(train_set_tmp)
 
-if False:
+if True:
     train_set.extend(finetuning_stories(input_file_name='../data/pohopekka_stories_general_language_title.json'))
     train_set.extend(finetuning_stories(input_file_name='../data/helmia_stories_general_language_title.json'))
 
 print("kekkonen")
-if False:
-    with open("../data/train_set2.json","w") as f:
+if True:
+    with open("../data/train_set4.json","w") as f:
         for message in train_set:
-            json.dump(message,f)
+            json.dump(message,f,ensure_ascii=False)
             f.write("\n")
 
-    with open("../data/test_set2.json","w") as f:
+    with open("../data/test_set4.json","w") as f:
         for message in test_set:
-            json.dump(message,f)
+            json.dump(message,f,ensure_ascii=False)
             f.write("\n")
 
 
