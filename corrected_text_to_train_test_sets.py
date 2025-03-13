@@ -18,6 +18,8 @@ lehv_arr=[]
 with open("../data/out_partially_corrected.json","w") as fw:
   with open("../data/dataset_partially_corrected.txt") as f:
     for line in f:
+      if "**" in line:
+        break
       line=line.replace("..",".").replace("..",".").replace("..",".")
       #print(line,end="")
       criteria = lambda x: ':' if ':' in x else ','
@@ -34,7 +36,7 @@ with open("../data/out_partially_corrected.json","w") as fw:
         line_json["orig"] = line_target
         line_json["transl"] = line_input
         line_idx[str(idx_json)] = line_json
-        json.dump(line_idx, fw)
+        json.dump(line_idx, fw, ensure_ascii=False)
         fw.write("\n")
         line_to_sent = ""
         idx_json += 1
