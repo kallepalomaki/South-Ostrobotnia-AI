@@ -72,10 +72,36 @@ else:
 
 # Query with standard Finnish
 #query = "Olen aina ollut vähän kovaääninen eikä ääneni siellä rintamaitovieroituksessa ainakaan hiljentynyt"
-query = "Olen ollut rintamaitovieroituksessa"
+query = "Aitan ovelta huusin matkalaiselle, hevosella pääsee lujaa! "
 query_embedding = get_embedding(query)
 _, indices = index.search(np.array([query_embedding]), k=3)
 
-for item in indices.flatten():
-    retrieved_dialect = id_to_text[str(item)]
-    print("Dialectal Output:", retrieved_dialect)
+# Fetch the corresponding text (document chunks) for these indices
+retrieved_chunks = [id_to_text[str(idx)] for idx in indices[0]]
+
+# Combine the selected chunks as context
+context = "\n\n".join(retrieved_chunks) + '\npääsee -> pääsöö\naitassa -> puaris' # Concatenate chunks
+
+print(context)
+
+def chat_completion(context, query, flag_full):
+    if flag_full:
+        query_full=f"Context:{context}\n\nQuestion:{query}"
+    else:
+        query_full=query
+    completion = client.chat.completions.create(
+    model="ft:gpt-4o-2024-08-06:personal::B3poyXlC",
+    #model= "ft:gpt-3.5-turbo-0125:personal::B1eKaRYa",
+    #model="gpt-4o-2024-08-06",
+      messages=[
+        {"role": "system", "content":  "You translate standard Finnish sentences into the South Ostrobothnian dialect."},# Use colloquial expressions and dialect-specific words.
+        {"role": "user", "content": query_full}
+      ],
+    temperature = 0.9 # Deterministic output
+    #top_p = 1,  # Full probability distribution
+    )
+
+
+    return completion.choices[0].message
+
+print(chat_completion(context=context, query=query, flag_full=1))
