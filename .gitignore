@@ -5,3 +5,4 @@ venv/
 !requirements.txt
 .idea/
 .DS_Store
+.ipynb_checkpoints/
