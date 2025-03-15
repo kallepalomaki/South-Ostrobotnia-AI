@@ -97,7 +97,7 @@ def chat_completion(context, query, flag_full):
         {"role": "system", "content":  "You translate standard Finnish sentences into the South Ostrobothnian dialect."},# Use colloquial expressions and dialect-specific words.
         {"role": "user", "content": query_full}
       ],
-    temperature = 0.9 # Deterministic output
+    temperature = 1.0 # Deterministic output
     #top_p = 1,  # Full probability distribution
     )
 

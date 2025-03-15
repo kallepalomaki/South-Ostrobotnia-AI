@@ -56,7 +56,7 @@ if False:
       ]
     )
 
-if True:
+if False:
     completion = client.chat.completions.create(
     #model="ft:gpt-3.5-turbo-0125:personal::9Dsc8mIV",
     #model="ft:gpt-3.5-turbo-0125:personal::9DxjYJle",
