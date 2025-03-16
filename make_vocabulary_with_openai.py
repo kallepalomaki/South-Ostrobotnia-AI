@@ -76,6 +76,7 @@ except json.JSONDecodeError as e:
     end = error_position + 100  # Show 100 chars after the error
     print(f"Problematic part of the JSON:\n{data_as_str[start:end]}")
 
+#remove duplicates
 vocabulary=[]
 for item in data_dict:
     vocabulary.append(str(item))
