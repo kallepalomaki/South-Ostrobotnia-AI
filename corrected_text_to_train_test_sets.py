@@ -16,7 +16,7 @@ def normalized_levenshtein(s1, s2):
 
 lehv_arr=[]
 with open("../data/out_partially_corrected.json","w") as fw:
-  with open("../data/dataset_partially_corrected.txt") as f:
+  with open("../data/dataset_to_correct8.txt") as f:
     for line in f:
       if "**" in line:
         break
