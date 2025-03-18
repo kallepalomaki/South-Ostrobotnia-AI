@@ -72,8 +72,8 @@ def write_translated(standard_dialect):
 
 def __main__():
     stories=get_pohopekka()
-    standard_dialect=match_story_sentences_to_standard(stories=stories)
-    train_set=write_translated(standard_dialect=standard_dialect,standard_finnish_sentences="../data/standard_finnish_sentences.json")
+    standard_dialect=match_story_sentences_to_standard(stories=stories,standard_finnish_sentences="../data/standard_finnish_sentences.json")
+    train_set=write_translated(standard_dialect=standard_dialect)
     random.shuffle(train_set)
 
     with open("../data/train_set_deep_seek_exp.json","w") as f:
